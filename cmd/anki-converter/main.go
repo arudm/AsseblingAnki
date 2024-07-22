@@ -2,11 +2,12 @@ package main
 
 import (
 	"AnkiConverter/internal/config"
-	"AnkiConverter/internal/libre-translate"
+	"AnkiConverter/internal/dictionary"
+	libretranslate "AnkiConverter/internal/libretranslate"
 	"encoding/json"
-	"fmt"
 	"log/slog"
 	"os"
+	"strings"
 )
 
 const (
@@ -47,7 +48,7 @@ func main() {
 	)
 	log.Debug("debug messages are enabled")
 
-	translated, err := libre_translate.LibreTranslate("Я молодой и красивый заяц",
+	translated, err := libretranslate.LibreTranslate("Человек",
 		"ru",
 		"en",
 		"text",
@@ -55,11 +56,22 @@ func main() {
 		"")
 
 	if err != nil {
-		// TODO: logging
-		fmt.Println(err)
+		log.Error("failed to translate text %s", err.Error())
 	}
 
-	res, _ := json.Marshal(translated)
+	text, _ := json.Marshal(translated)
+	log.Info(string(text))
 
-	println(string(res))
+	translated.TranslatedText = strings.Trim(translated.TranslatedText, "!@#$%^&*()_-=+`~")
+	texts := strings.Split(translated.TranslatedText, " ")
+	for _, word := range texts {
+		respDict, err := dictionary.GetDictionary(word)
+		if err != nil {
+			log.Error("failed to get dictionary %s", err.Error())
+		}
+
+		res, _ := json.Marshal(respDict)
+		log.Info(string(res))
+	}
+
 }

@@ -1,4 +1,4 @@
-package libre_translate
+package libretranslate
 
 import (
 	"encoding/json"
@@ -19,7 +19,7 @@ func LibreTranslate(q string,
 	format string,
 	alternatives int,
 	apiKey string) (*Translate, error) {
-	const op = "libre-translate.LibreTranslate"
+	const op = "libretranslate.LibreTranslate"
 
 	req, err := http.NewRequest("POST",
 		"http://localhost:5000/translate",
